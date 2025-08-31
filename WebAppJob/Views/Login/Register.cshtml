@@ -3,52 +3,54 @@
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
-<div class="container text-white m-5">
-    <h2>Register</h2>
+<div class="container text-white m-5 m-4">
+    <h2 class="m-4">Crear cuenta</h2>
     <hr />
-    <form asp-action="SaveNewUser" method="post" asp-controller="Login">
+    <form asp-action="SaveNewUser" class="ml-5 mr-5 mt-3" method="post" asp-controller="Login">
         <div class="row mt-3">
-            <div class="col-2">
+            <div class="col-4">
                 <div class="form-group">
-                    <label class="control-label">User Name</label>
+                    <label class="control-label">Usuario</label>
                     <input type="text" asp-for="UserName" class="form-control" />
                     <span class="text-danger" asp-validation-for="UserName"></span>
                 </div>
             </div>
-            <div class="col-2">
+            <div class="col-4">
                 <div class="form-group">
-                    <label class="control-label">Email</label>
+                    <label class="control-label">Correo Electrónico</label>
                     <input asp-for="Email" class="form-control" />
                     <span class="text-danger" asp-validation-for="Email"></span>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 <div class="form-group">
-                    <label class="control-label">Rol</label>
-                    <select class="form-control" size="1" asp-for="Roles"></select>
-                    <span class="text-danger" asp-validation-for="Roles"></span>
+                    <label class="control-label">Compañia</label>
+                    <select class="form-select" size="1" asp-items="@Model.CompaniesItems" asp-for="Companie"></select>
+                    <span class="text-danger" asp-validation-for="Companies"></span>
                 </div>
             </div>
-            <div class="col-2">
+        </div>
+        <div class="row mt-2">
+            <div class="col-4">
                 <div class="form-group">
-                    <label class="control-label">Password</label>
+                    <label class="control-label">Contraseña</label>
                     <input type="password" asp-for="Password" class="form-control" />
                     <span class="text-danger" asp-validation-for="Password"></span>
                 </div>
             </div>
 
-            <div class="col-2">
+            <div class="col-4">
                 <div class="form-group">
-                    <label class="control-label">Confirm Password</label>
+                    <label class="control-label">Confirmar Contraseña</label>
                     <input type="password" asp-for="ConfirmPassword" class="form-control" />
                     <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
                 </div>
             </div>
         </div>
-        <div class="row mt-3">
+        <div class="row mt-2">
             <div class="col">
                 <div class="form-group">
-                    <label class="control-label">Name</label>
+                    <label class="control-label">Nombre</label>
                     <input type="text" asp-for="Name" class="form-control" />
                     <span class="text-danger" asp-validation-for="Name"></span>
                 </div>
@@ -56,7 +58,7 @@
 
             <div class="col">
                 <div class="form-group">
-                    <label class="control-label">Last Name</label>
+                    <label class="control-label">Apellidos</label>
                     <input type="text" asp-for="LastName" class="form-control" />
                     <span class="text-danger" asp-validation-for="LastName"></span>
                 </div>
@@ -65,32 +67,32 @@
         <div class="row mt-3">
             <div class="col-4">
                 <div class="form-group">
-                    <label class="control-label">Birthdate</label>
-                    <input type="date" asp-for="Birthdate" class="form-control" />
-                    <span class="text-danger" asp-validation-for="Birthdate"></span>
+                    <label class="control-label">RFC</label>
+                    <input type="text" asp-for="Rfc" class="form-control" />
+                    <span class="text-danger" asp-validation-for="Rfc"></span>
                 </div>
             </div>
             <div class="col-4">
                 <div class="form-group">
-                    <label class="control-label">Age</label>
-                    <input type="number" asp-for="Age" class="form-control" />
-                    <span class="text-danger" asp-validation-for="Age"></span>
+                    <label class="control-label">Fecha de nacimiento</label>
+                    <input type="date" asp-for="Birthdate" class="form-control" />
+                    <span class="text-danger" asp-validation-for="Birthdate"></span>
                 </div>
             </div>
+
         </div>
         <div class="row mt-3">
             <div class="col d-flex justify-content-center mt-4 ">
-                <input class="btn btn-success w-40"
+                <input class="btn btn-primary w-40"
                        type="submit" value="Register">
             </div>
         </div>
 
     </form>
 
-
     <div class="row mt-3">
         <div class="col d-flex justify-content-center">
-            <a asp-action="Index" asp-fragment="Login">
+            <a asp-action="Index" asp-controller="Login">
                 Log in
             </a>
         </div>

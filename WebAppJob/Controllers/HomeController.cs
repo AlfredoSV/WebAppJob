@@ -26,7 +26,7 @@ namespace WebAppJob.Controllers
         [AuthFilter]
         [HttpGet]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "Admin")]
-        public IActionResult Index(string userName)
+        public IActionResult Index()
         {
             try
             {

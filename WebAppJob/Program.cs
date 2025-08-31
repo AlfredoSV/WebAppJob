@@ -1,5 +1,4 @@
 using Framework.Security2023;
-using NLog.Web;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Application.Services;
@@ -11,7 +10,8 @@ using Domain.Repositories;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Framework.Utilities.Services;
-using DocumentFormat.OpenXml.InkML;
+using Serilog;
+
 
 try
 {
@@ -21,12 +21,13 @@ try
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.RequireAuthenticatedSignIn = true;
         options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-       
+
     }).AddCookie(options =>
     {
         options.Cookie.Name = "ACookie$";
         options.ExpireTimeSpan = TimeSpan.FromHours(2);
-        options.Events = new CookieAuthenticationEvents() { 
+        options.Events = new CookieAuthenticationEvents()
+        {
             OnRedirectToLogin = x =>
             {
                 x.Response.Redirect("/login");
@@ -41,17 +42,14 @@ try
     });
 
     string connectionStr = builder.Configuration.GetConnectionString("SqlServer");
-    string connectionStrFkw = builder.Configuration.GetConnectionString("SqlServerFkw");
     string languaje = builder.Configuration.GetSection("DefaultLanguaje").Value;
-    SlqConnectionStr.Instance.SqlConnectionString = connectionStrFkw;
-
+    SlqConnectionStr.Instance.SqlConnectionString = builder.Configuration.GetConnectionString("SqlServerFkw");
 
     // Add services to the container.
-    builder.Services.AddControllersWithViews();  
+    builder.Services.AddControllersWithViews();
     //CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(languaje);
     builder.Logging.ClearProviders();
-    builder.Host.UseNLog();   
-    builder.Services.AddResponseCaching();
+    //builder.Services.AddResponseCaching();
     builder.Services.AddTransient<IServiceLogin, ServiceLogin>();
     builder.Services.AddTransient<IRepositoryJob, RepositoryJob>();
     builder.Services.AddTransient<IServiceJob, ServiceJob>();
@@ -59,6 +57,19 @@ try
     builder.Services.AddTransient<IServiceRole, ServiceRole>();
     builder.Services.AddTransient<IServiceCatalog<Area>, ServiceCatalogArea>();
     builder.Services.AddTransient<IServiceCatalog<Company>, ServiceCatalogCompany>();
+    //Log.Logger = new LoggerConfiguration()
+    //    .MinimumLevel.Debug()
+    //    .WriteTo.File("logs.txt", rollingInterval: RollingInterval.Day)
+    //    .CreateLogger();
+
+
+    // Construir el contenedor de dependencias
+    //builder.Services.AddLogging(builder =>
+    //     {
+    //         builder.ClearProviders();
+    //         builder.AddSerilog(); // usar Serilog
+    //     });
+
     builder.Services.AddInitialServices();
 
     //builder.Services.AddSession(options =>
@@ -74,7 +85,7 @@ try
     builder.Services.AddMvc().AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix).AddDataAnnotationsLocalization();
 
     var app = builder.Build();
-    app.UseResponseCaching();
+    //app.UseResponseCaching();
     //app.Use(async(context, next) =>
     //{
     //    context.Response.GetTypedHeaders().CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue { MaxAge = TimeSpan.FromSeconds(10), Public = true };

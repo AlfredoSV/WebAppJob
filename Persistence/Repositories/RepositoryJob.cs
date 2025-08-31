@@ -46,7 +46,6 @@ namespace Domain.Repositories
                         response.Count = jobContext
                             .Jobs.AsQueryable().Where(st => st.DescriptionJob.Contains(search) || st.NameJob.Contains(search))
                             .Count();
-
                     }
                 }
                
@@ -152,8 +151,6 @@ namespace Domain.Repositories
                     await jobContext.SaveChangesAsync();
                     return DtoResponse.Create(StatusRequest.Ok);
                 }
-
-
             }
             catch (Exception e)
             {
@@ -167,15 +164,12 @@ namespace Domain.Repositories
         {
             try
             {
-
                 using (JobContext jobContext = _jobContext.CreateDbContext())
                 {
                     await jobContext.AddAsync(job);
                     await jobContext.SaveChangesAsync();
                     return DtoResponse.Create(StatusRequest.Ok);
                 }
-
-
             }
             catch (Exception e)
             {
@@ -189,7 +183,6 @@ namespace Domain.Repositories
         {
             try
             {
-
                 using (JobContext jobContext = _jobContext.CreateDbContext())
                 {
                     Job jobRes = (await GetJobById(job.Id)).Data;

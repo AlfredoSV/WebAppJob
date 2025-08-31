@@ -1,4 +1,6 @@
-﻿using Framework.Security2023.Dtos;
+﻿using Application.IServices;
+using Domain.Entities;
+using Framework.Security2023.Dtos;
 using Framework.Security2023.Entities;
 using Framework.Security2023.IServices;
 using Framework.Utilities.Entities;
@@ -14,9 +16,12 @@ namespace WebAppJob.Controllers
     {
         private readonly IServiceLogin _serviceLogin;
         private readonly IServiceUser _serviceUser;
+        private readonly IServiceCatalog<Company> serviceCompanies;
         private readonly IServiceRole _serviceRole;
-        public LoginController(IServiceLogBook serviceLogBook, IServiceUser serviceUser, IServiceLogin serviceLogin, IServiceRole serviceRole) : base(serviceLogBook)
+        public LoginController(IServiceLogBook serviceLogBook, IServiceUser serviceUser, IServiceLogin serviceLogin, IServiceRole serviceRole,
+            IServiceCatalog<Company> serviceCompanies) : base(serviceLogBook)
         {
+            this.serviceCompanies = serviceCompanies;
             this._serviceRole = serviceRole;
             this._serviceUser = serviceUser;
             this._serviceLogin = serviceLogin;
@@ -37,13 +42,15 @@ namespace WebAppJob.Controllers
         [HttpGet("[action]")]
         public IActionResult AccesDenied() => View();
 
-        [HttpGet]
-        public IActionResult Register()
+        [HttpGet("register")]
+        public async Task<IActionResult> Register()
         {
-            return View(new UserViewModelRegister() { Roles = new List<Role>()});
+            var registerViewModel = new UserViewModelRegister();
+            registerViewModel.Companies = (await this.serviceCompanies.GetAllAsync()).ToList();
+            return View(registerViewModel);
         }
 
-        [HttpGet]
+        [HttpGet("forgotPassword")]
         public IActionResult ForgotPassword() => View();
 
         [HttpPost]
@@ -105,7 +112,7 @@ namespace WebAppJob.Controllers
                 {
                     case StatusLogin.Ok:
                         await SignIn(userLogin);
-                        return RedirectToAction("Index", "Home", new { user.UserName });
+                        return RedirectToAction("Index", "Home");
                     case StatusLogin.UserOrPasswordIncorrect:
                         errorMessage = "Password Incorrect.";
                         break;
@@ -228,15 +235,23 @@ namespace WebAppJob.Controllers
                     return View(viewName: "Register", userViewModel);
                 }
 
+                //Change to create rol by default
+                Guid rolByDefault = Guid.Parse("35AE4DB6-0243-4B44-9B8B-C4E49ABD17E3");
+
                 UserFkw userFkw = UserFkw.Create(
-                    userViewModel.Name,
-                    userViewModel.Password,
-                    Guid.NewGuid(), false,
-                    Guid.Parse("35AE4DB6-0243-4B44-9B8B-C4E49ABD17E3"));
+                    userName: userViewModel.Name,
+                    password: userViewModel.Password,
+                    Guid.Empty,
+                    false,
+                    rolByDefault);
 
                 userFkw.UserInformation = UserInformation.Create(
-                    userViewModel.Name, userViewModel.LastName, userViewModel.Age,
-                    string.Empty, userViewModel.Email, Guid.NewGuid());
+                    name: userViewModel.Name,
+                    lastName: userViewModel.LastName,
+                    age: userViewModel.Age,
+                    address: string.Empty,
+                    email: userViewModel.Email,
+                    Guid.NewGuid());
 
                 await _serviceUser.CreateUser(userFkw, false);
 

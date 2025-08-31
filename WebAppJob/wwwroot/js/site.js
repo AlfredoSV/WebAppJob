@@ -332,10 +332,8 @@ const loadCatalogs = async () => {
 }
 
 const closeBtnModalCreateJob = () => {
-
     $('#createJobModal').modal('hide');
     document.querySelector("#formJob").innerHTML = '';
-
 }
 
 const closeBtnModalDetailJob = () => {

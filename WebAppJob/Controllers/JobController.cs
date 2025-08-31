@@ -120,18 +120,13 @@ namespace WebAppJob.Controllers
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> ListJobs(int page, int pageSize, string searchText, string citySearch)
         {
-
             try
             {
-
-                List<JobViewModel> jobsResult = new List<JobViewModel>();
-
                 DtoPaginationViewModel<JobViewModel> dtoPaginationViewModel = new DtoPaginationViewModel<JobViewModel>();
 
                 DtoResponse<List<Job>> response = await _serviceJob.GetJobsList(page, pageSize, searchText, citySearch);
 
-                _mapper.Map(response.Data, jobsResult);
-                dtoPaginationViewModel.Data = jobsResult;
+                _mapper.Map(response.Data, dtoPaginationViewModel.Data);
 
                 dtoPaginationViewModel.PaginationViewModel = new PaginationViewModel()
                 {
